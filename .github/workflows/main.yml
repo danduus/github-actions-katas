@@ -1,5 +1,8 @@
 name: Main workflow
 on: push
+env: # Set the secret as an input
+  docker_username: ${{ github.actor }} 
+  docker_password: ${{ secrets.GITHUB_TOKEN }} #Nees to be set to be made available to the workflow
 jobs:
   Build:
     runs-on: ubuntu-latest
@@ -12,9 +15,13 @@ jobs:
       
       - name: Test       
         run: ci/unit-test-app.sh
-  Linting:
+  Docker-image:
     runs-on: ubuntu-latest
     needs: [Build]
+    permissions:
+      packages: write
+
+      
     steps:
       - name: Download code
         uses: actions/checkout@v4
@@ -28,3 +35,8 @@ jobs:
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DISABLE_ERRORS: true 
+
+      - name: build docker
+        run: bash ci/build-docker.sh
+      - name: push docker
+        run: bash ci/push-docker.sh
