@@ -35,6 +35,7 @@ jobs:
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DISABLE_ERRORS: true 
+          GIT_COMMIT: ${{github.sha}}
 
       - name: build docker
         run: bash ci/build-docker.sh
